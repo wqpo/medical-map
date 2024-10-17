@@ -169,6 +169,32 @@
         .footer {
             margin-left: 20px;
         }
+        .back-link {
+    margin: 20px;
+    
+}
+  
+
+.back-button {
+    text-decoration: none;
+            color: black;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #d0d0d0;
+            color: black;
+            font-weight: bold;
+        }
+
+
+
+
         .contact-link {
             margin: 20px;
             text-align: left;
@@ -203,6 +229,8 @@
             border-radius: 5px;
             cursor: pointer;
         }
+       
+
         @media (max-width: 600px) {
             .menu {
                 flex-direction: column;
@@ -211,22 +239,8 @@
                 grid-template-columns: 1fr;
             }
         }
-        .contact-button {
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            font-size: 16px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            display: inline-block;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .contact-button:hover {
-            background-color: #0056b3;
-        }
+        
+    
         .leaflet-popup {
     background-color: rgba(128, 128, 128, 0.9) !important; /* グレーの背景 */
     color: white !important; /* テキストを白に設定 */
@@ -397,7 +411,7 @@
 </div>
 
 
-       
+   
         
     </div>
 
@@ -411,7 +425,7 @@
         <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
         Survey Limitations
     </h2>
-    <p style="margin-left: 20px;">The accuracy of the information cannot be guaranteed due to limited survey methods.</p>
+    <p style="margin-left: 20px;">The accuracy of the information cannot be guaranteed due to limited survey methods.<br>For example, as time passes, staff who can speak foreign languages ​​may be transferred, or may not be available when you visit for some reason.</p>
 
     <h2 id="about">
         <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
@@ -423,10 +437,25 @@
         <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
         Smartphone app
     </h2>
-    <p style="margin-left: 20px;">あとでQRコードここに貼る</p>
+    <p style="margin-left: 20px;">あとでQRコードここに貼る(作成中)</p>
 
-
-
+    <h2 id="back">
+        <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+        Feedback and Requests
+    </h2>
+    <p style="margin-left: 20px;">
+        Thank you for visiting this site. This site is still under development. Please let us know your thoughts, requests, and any additional information or features you would like to see.
+    </p>
+    
+    <div class="back-link">
+        <a href="https://forms.gle/WTQeezxJ76csekT29" class="back-button">
+            Submit feedback
+        </a>
+    </div>
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    
     <h2 id="contact">
         <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
         Contact us(問い合わせはこちら)
@@ -453,6 +482,7 @@
 <!-- 病院情報 -->
 <script type="module" src="hospitals.js"></script>
 <script type="module" src="script.js"></script>
+<script type="module" src="sub.js"></script>
 
         
     </body>

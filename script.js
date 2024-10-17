@@ -82,12 +82,13 @@ if (nearbyHospitalsButton) {
 
 // 現在地マーカーのアイコンを定義
 const currentLocationIcon = L.icon({
-    iconUrl: 'images/red-pin.png', // アイコンのパスを指定
-    iconSize: [25, 41], // アイコンのサイズ
-    iconAnchor: [12, 41],
+    iconUrl: 'images/red-pin.png',
+    iconSize: [30, 30], // 幅と高さを調整
+    iconAnchor: [15, 30],
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
 });
+
 
 
 
@@ -142,26 +143,85 @@ if (!startLocationSelect || !goalSelect) {
 function addHospitalMarkers() {
     hospitals.forEach(hospital => {
         const [lat, lng] = hospital.coordinates;
-        const marker = L.marker([lat, lng]).addTo(map).bindPopup(hospital.name); // マーカーとポップアップを追加
-        
-        // マーカーがクリックされたときのイベント
-        marker.on('click', () => {
-            if (currentMarker) {
-                const startCoords = currentMarker.getLatLng(); // 現在地の座標を取得
-                const goalCoords = L.latLng(lat, lng); // 病院の座標
+        const marker = L.marker([lat, lng]).addTo(map);
 
-                // ルートを計算
+        // 病院の情報を含むポップアップを設定
+        const departments = Array.isArray(hospital.departments) ? hospital.departments.join(', ') : '情報なし';
+        const languages = Array.isArray(hospital.languages) ? hospital.languages.join(', ') : '情報なし';
+        const patientsInformation = Array.isArray(hospital.patientsInformation) ? hospital.patientsInformation.join('<br>') : '情報なし';
+        const interviewSheet = Array.isArray(hospital.interviewSheet) ? hospital.interviewSheet.join('<br>') : '情報なし';
+        const flowFromReception = Array.isArray(hospital.flowFromReceptionToExamination) ? hospital.flowFromReceptionToExamination.join('<br>') : '情報なし';
+        const whatWeWantToKnow = hospital.whatWeWantYouToKnowBeforeComing && Array.isArray(hospital.whatWeWantYouToKnowBeforeComing) ? hospital.whatWeWantYouToKnowBeforeComing.join('<br>') : '';
+
+        const popupContent = `
+        <strong>${hospital.name}</strong><br>
+        <strong>Departments:</strong> ${departments}<br>
+        <strong>Languages:</strong> ${languages}<br>
+        <strong>Patients Information:</strong> ${patientsInformation}<br>
+        <strong>Interview Sheet:</strong> ${interviewSheet}<br>
+        <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
+        <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
+        ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
+        <button class="route-button" data-lat="${lat}" data-lng="${lng}">この病院へ行く</button>
+        `;
+
+        marker.bindPopup(popupContent); // ポップアップをバインド
+
+        // ポップアップが開いたときにボタンにイベントリスナーを追加
+        marker.on('popupopen', () => {
+            const routeButton = document.querySelector('.route-button'); // ボタンを正しく取得
+            routeButton.addEventListener('click', (event) => {
+                const goalCoords = L.latLng(lat, lng);
+                if (currentMarker) {
+                    const startCoords = currentMarker.getLatLng();
+                    // ルート案内を表示
+                    if (!routingControl) {
+                        addRoutingControl();
+                    }
+                    routingControl.setWaypoints([startCoords, goalCoords]);
+                } else {
+                    alert("現在地が取得できていません。");
+                }
+            });
+        });
+    });
+}
+
+
+
+    // ルートボタンのクリックイベントを設定
+    document.querySelectorAll('.route-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation(); // ポップアップのクリックイベントをキャンセル
+    
+            const lat = parseFloat(e.target.dataset.lat);
+            const lng = parseFloat(e.target.dataset.lng);
+    
+            if (currentMarker) {
+                const startCoords = currentMarker.getLatLng();
+                const goalCoords = L.latLng(lat, lng);
+    
+                // ルート案内を表示
                 if (!routingControl) {
                     addRoutingControl(); // ルーティングコントロールを追加
                 }
                 routingControl.setWaypoints([startCoords, goalCoords]); // ルートを設定
-                map.setView(startCoords, 13); // 地図を現在地にセンタリング
             } else {
                 alert("現在地が取得できていません。");
             }
         });
     });
-}
+    
+
+
+
+
+
+  
+
+
+
+
 
 
 // ルート計算
@@ -284,10 +344,11 @@ function displayNearbyHospitals(latitude, longitude) {
     const nearbyHospitals = hospitals.map(hospital => {
         const [hospitalLat, hospitalLng] = hospital.coordinates;
         const distance = calculateDistance(latitude, longitude, hospitalLat, hospitalLng);
-        console.log(`病院: ${hospital.name}, 距離: ${distance}`); // デバッグ用
         return { hospital, distance };
-    }).filter(h => h.distance <= 10) // 10km以内の病院をフィルタリング
-      .sort((a, b) => a.distance - b.distance); // 距離でソート
+    })
+    .filter(h => h.distance <= 10) // 10km以内の病院をフィルタリング
+    .sort((a, b) => a.distance - b.distance) // 距離でソート
+    .slice(0, 5); // 上位5つを取得
 
     // リストを作成
     if (nearbyHospitals.length === 0) {
@@ -307,9 +368,52 @@ function displayNearbyHospitals(latitude, longitude) {
         });
     }
 
+    // すべての病院を見るボタンを追加
+    const seeAllButton = document.createElement('button');
+    seeAllButton.textContent = 'See all hospitals near you';
+    seeAllButton.onclick = () => {
+        displayAllNearbyHospitals(latitude, longitude); // すべての病院を表示する関数を呼び出す
+    };
+    hospitalList.appendChild(seeAllButton);
+
     // リストを表示
     hospitalList.style.display = 'block'; // リストを表示
 }
+
+// すべての近くの病院を表示する関数
+function displayAllNearbyHospitals(latitude, longitude) {
+    const hospitalList = document.getElementById('hospital-list');
+    hospitalList.innerHTML = ''; // リストをクリア
+
+    const allNearbyHospitals = hospitals.map(hospital => {
+        const [hospitalLat, hospitalLng] = hospital.coordinates;
+        const distance = calculateDistance(latitude, longitude, hospitalLat, hospitalLng);
+        return { hospital, distance };
+    })
+    .filter(h => h.distance <= 10) // 10km以内の病院をフィルタリング
+    .sort((a, b) => a.distance - b.distance); // 距離でソート
+
+    if (allNearbyHospitals.length === 0) {
+        const noHospitalsItem = document.createElement('li');
+        noHospitalsItem.textContent = '近くに病院はありません。';
+        hospitalList.appendChild(noHospitalsItem);
+    } else {
+        allNearbyHospitals.forEach(({ hospital, distance }) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${hospital.name} (${distance.toFixed(2)} km)`;
+
+            listItem.onclick = () => {
+                goalSelect.value = hospital.name; // 目的地を選択
+                calculateRoute(); // ルート計算を呼び出す
+            };
+            hospitalList.appendChild(listItem);
+        });
+    }
+
+    // リストを表示
+    hospitalList.style.display = 'block'; // リストを表示
+}
+
 
 
 

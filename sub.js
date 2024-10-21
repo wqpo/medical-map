@@ -6,3 +6,4 @@ export const additionalLocations = [
     { name: '研究学園駅', coordinates: [36.08150025003839, 140.08139091651273] }, 
     { name: 'スーパーセンタートライアルつくば学園都市店', coordinates: [36.09668933382652, 140.08676834256102] } 
 ];
+　　

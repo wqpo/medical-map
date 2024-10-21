@@ -7,6 +7,7 @@
     <title>📍Tsukuba City Foreign Language Supported Hospitals Map</title>
 
 
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -150,6 +151,21 @@
         #nearby-hospitals {
             margin-top: 10px;
         }
+/* ルートを計算 */
+        select {
+    width: 150px; /* 適切な幅に設定 */
+    white-space: nowrap; /* テキストを1行にする */
+    overflow: hidden; /* 溢れた部分を隠す */
+    text-overflow: ellipsis; /* 溢れたテキストを「…」で表示 */
+}
+
+.option-text {
+    display: inline-block;
+    max-width: 100px; /* 表示幅を制限 */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
         .leaflet-control-container .leaflet-routing-container {
         background-color:#f0f0f0;
@@ -323,42 +339,61 @@
 
 <!-- Options for department -->
 <div id="filter">
-    <label for="start-location" style="margin-left: 20px;">⚫️Department:</label>
+    <label for="department-select" style="margin-left: 20px;">⚫️Department:</label>
     <select id="department-select">
-        <option value="all">All</option>
-        <option value="歯科">🦷 Dental</option>
-        <option value="整形外科">🦴 Orthopedics</option>
-        <option value="脳神経">🧠 Cranial Nerves</option>
-        <option value="内科">🧑‍⚕️ Internal Medicine</option>
-        <option value="外科">✂️ Surgery</option>
-        <option value="肛門科">🩲 Proctology</option>
-        <option value="小児科">👦 Pediatrics</option>
-        <option value="皮膚科">🖐️ Dermatology</option>
-        <option value="胃腸科・消化器">🥐 Gastroenterology/Digestive System</option>
-        <option value="心療内科・精神科">🩵 Psychosomatic Medicine/Psychiatry</option>
-        <option value="複数">➕ Multiple</option>
+        <option value="all">all</option>
+        <option value="🦷 Dentistry">🦷 Dentistry</option>
+        <option value="🦴 Orthopedics">🦴 Orthopedics</option>
+        <option value="🧠 Cranial Nerves">🧠 Cranial Nerves</option>
+        <option value="🧑‍⚕️ Internal Medicine">🧑‍⚕️ Internal Medicine</option>
+        <option value="✂︎ Surgery">✂︎ Surgery</option>
+        <option value="🩲 Proctology">🩲 Proctology</option>
+        <option value="👦 Pediatrics">👦 Pediatrics</option>
+        <option value="🖐️ Dermatology">🖐️ Dermatology</option>
+        <option value="🥐 Gastroenterology">🥐 Gastroenterology</option>
+        <option value="🫃 Gastrointestinal Medicine">🫃 Gastrointestinal Medicine</option>
+        <option value="🩵 Psychiatry">🩵 Psychiatry</option>
+        <option value="💨 Respiratory Medicine">💨 Respiratory Medicine</option>
+        <option value="🪞 Endoscopic Medicine">🪞 Endoscopic Medicine</option>
+        <option value="🌼 Allergy Department">🌼 Allergy Department</option>
+        <option value="❤️ Cardiovascular Medicine">❤️ Cardiovascular Medicine</option>
+        <option value="🦋 Endocrine Surgery (Thyroid Specialist)">🦋 Endocrine Surgery (Thyroid Specialist)</option>
+        <option value="🌿 Chinese Medicine">🌿 Chinese Medicine</option>
+        <option value="🧬 Nephrology">🧬 Nephrology</option>
+        <option value="🫣 Stomach Cancer Screening">🫣 Stomach Cancer Screening</option>
+        <option value="🩸 Colon Cancer Screening">🩸 Colon Cancer Screening</option>
+        <option value="💉 Pain Clinic">💉 Pain Clinic</option>
+        <option value="🩺 Health Check">🩺 Health Check</option>
+        <option value=“🩼Rehabilitatio”>🩼Rehabilitation</option>
+        <option value="➕multiple">➕multiple</option>
+
     </select>
-    
 
     <br>
 
     <label for="language-select" style="margin-left: 20px;">⚫️Supported Languages:</label>
     <select id="language-select">
-        <option value="all">All</option>
+        <option value="all">all</option> <!-- 初期値を設定 -->
         <option value="English">English</option>
         <option value="Chinese">Chinese</option>
         <option value="Vietnamese">Vietnamese</option>
     </select>
 
     <br>
+    <label for="medicinePickupSelect" style="margin-left: 20px;">⚫️Where to pick up medicines:</label>
+<select id="medicinePickupSelect">
+    <option value="all">all</option> <!-- 初期値を設定 -->
+    <option value="In hospital">In hospital</option> <!-- 小文字に修正 -->
+    <option value="Pharmacy">Pharmacy</option>
+</select>
 
-    <label for="pickup-location-select" style="margin-left: 20px;">⚫️Where to pick up medicines:</label>
-    <select id="pickup-location-select">
-        <option value="all">All</option>
-        <option value="in hospital">In Hospital</option>
-        <option value="pharmacy outside the hospital">Pharmacy Outside the Hospital</option>
-    </select>
+    
+    <button id="filter-button">Filter Hospitals</button>
 </div>
+
+<div id="results"></div>
+
+
 
 <!-- Subheading for known locations -->
 <h3 style="font-weight: bold; font-size: 20px; margin-left: 20px; margin-bottom: 10px;">📍Search from Known Locations</h3>

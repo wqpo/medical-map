@@ -399,4 +399,4 @@ const hospitals = [
 ];
 
 // このファイルをモジュールとしてエクスポート
-export default hospitals; 
+export { hospitals };

@@ -1,4 +1,4 @@
-export const hospitals = [
+const hospitals = [
     
     {
         name: "Takada Orthopedic Clinic",
@@ -399,4 +399,4 @@ export const hospitals = [
 ];
 
 // このファイルをモジュールとしてエクスポート
-export default hospitals;
+export { hospitals };

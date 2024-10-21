@@ -1,4 +1,4 @@
-const hospitals = [
+export const hospitals = [
     
     {
         name: "Takada Orthopedic Clinic",

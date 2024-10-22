@@ -229,7 +229,6 @@ if (!startLocationSelect || !goalSelect) {
 }
 
 // 病院の位置情報をマップに表示する関数
-// 病院の位置情報をマップに表示する関数
 function addHospitalMarkers() {
     hospitals.forEach(hospital => {
         const [lat, lng] = hospital.coordinates;
@@ -244,15 +243,15 @@ function addHospitalMarkers() {
         const whatWeWantToKnow = hospital.whatWeWantYouToKnowBeforeComing && Array.isArray(hospital.whatWeWantYouToKnowBeforeComing) ? hospital.whatWeWantYouToKnowBeforeComing.join('<br>') : '';
 
         const popupContent = `
-        <strong>${hospital.name}</strong><br>
-        <strong>Departments:</strong> ${departments}<br>
-        <strong>Languages:</strong> ${languages}<br>
-        <strong>Patients Information:</strong> ${patientsInformation}<br>
-        <strong>Interview Sheet:</strong> ${interviewSheet}<br>
-        <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
-        <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
-        ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
-        <button class="route-button" data-lat="${lat}" data-lng="${lng}">この病院へ行く</button>
+            <strong>${hospital.name}</strong><br>
+            <strong>Departments:</strong> ${departments}<br>
+            <strong>Languages:</strong> ${languages}<br>
+            <strong>Patients Information:</strong> ${patientsInformation}<br>
+            <strong>Interview Sheet:</strong> ${interviewSheet}<br>
+            <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
+            <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
+            ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
+            <button class="route-button" data-lat="${lat}" data-lng="${lng}">この病院へ行く</button>
         `;
 
         marker.bindPopup(popupContent); // ポップアップをバインド
@@ -260,22 +259,29 @@ function addHospitalMarkers() {
         // ポップアップが開いたときにボタンにイベントリスナーを追加
         marker.on('popupopen', () => {
             const routeButton = document.querySelector('.route-button'); // ボタンを正しく取得
-            routeButton.addEventListener('click', (event) => {
+
+            // ボタンのイベントリスナーを設定
+            routeButton.onclick = (event) => {
                 const goalCoords = L.latLng(lat, lng);
                 if (currentMarker) {
                     const startCoords = currentMarker.getLatLng();
+
                     // ルート案内を表示
                     if (!routingControl) {
                         addRoutingControl();
+                    } else {
+                        routingControl.spliceWaypoints(0, routingControl.getWaypoints().length); // 以前のルートをクリア
                     }
                     routingControl.setWaypoints([startCoords, goalCoords]);
                 } else {
                     alert("現在地が取得できていません。");
                 }
-            });
+            };
         });
     });
 }
+
+
 
 
 
@@ -419,7 +425,18 @@ window.addEventListener('load', function() {
                         alert("不明なエラーが発生しました。");
                         break;
                 }
+            });
+        });
+    }
 
+    // "Search for Hospitals" ボタンのクリックイベント
+    const searchButton = document.getElementById('search-for-hospitals');
+    if (searchButton) {
+        searchButton.addEventListener('click', () => {
+            // 位置情報を取得して近くの病院を表示
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                displayNearbyHospitals(latitude, longitude);
             });
         });
     }
@@ -469,6 +486,7 @@ function displayNearbyHospitals(latitude, longitude) {
     // リストを表示
     hospitalList.style.display = 'block'; // リストを表示
 }
+
 
 // すべての近くの病院を表示する関数
 function displayAllNearbyHospitals(latitude, longitude) {

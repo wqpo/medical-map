@@ -394,15 +394,13 @@ function getCurrentLocation() {
 
 // 近くの病院を表示する関数
 // ページがロードされたときにリストを非表示に設定
-// ページがロードされたときにリストを非表示に設定
-// ページがロードされたときにリストを非表示に設定
 window.addEventListener('load', function() {
     const hospitalList = document.getElementById('hospital-list');
-    hospitalList.style.display = 'none'; // 初期状態で非表示にする
+    hospitalList.style.display = 'none'; // 初期状態で病院リストを非表示に
 
     // 現在地から探すボタンのイベントリスナーを追加
-    const findNearbyButton = document.getElementById('nearby-hospitals'); // IDを修正
-    if (findNearbyButton) { // 要素が存在するか確認
+    const findNearbyButton = document.getElementById('nearby-hospitals');
+    if (findNearbyButton) {
         findNearbyButton.addEventListener('click', function() {
             // 位置情報を取得して表示関数を呼び出す
             navigator.geolocation.getCurrentPosition((position) => {
@@ -425,18 +423,6 @@ window.addEventListener('load', function() {
                         alert("不明なエラーが発生しました。");
                         break;
                 }
-            });
-        });
-    }
-
-    // "Search for Hospitals" ボタンのクリックイベント
-    const searchButton = document.getElementById('search-for-hospitals');
-    if (searchButton) {
-        searchButton.addEventListener('click', () => {
-            // 位置情報を取得して近くの病院を表示
-            navigator.geolocation.getCurrentPosition((position) => {
-                const { latitude, longitude } = position.coords;
-                displayNearbyHospitals(latitude, longitude);
             });
         });
     }
@@ -475,7 +461,7 @@ function displayNearbyHospitals(latitude, longitude) {
         });
     }
 
-    // リストを表示
+    // 位置情報を取得して病院リストを表示
     hospitalList.style.display = 'block'; // 位置情報取得後にリストを表示
 }
 

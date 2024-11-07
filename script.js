@@ -25,8 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 病院の位置がマップ上に表示
     addHospitalMarkers();
-    addHospitalOptions(); 
+    addHospitalOptions(); // ここを修正：addHospitalOptionsの定義が不足している場合、定義が必要
+
 });
+
+// `addHospitalOptions` が未定義の場合、次のように仮に定義を追加
+function addHospitalOptions() {
+    // ここにオプションを追加する処理を書く
+}
 
 // 『Search from your current location』ボタンの処理
 const searchButton = document.getElementById('nearby-hospitals');
@@ -47,6 +53,8 @@ if (searchButton) {
 }
 
 // 病院リストを表示する関数
+let hospitalMarkers = {}; // 病院のマーカーを保持するオブジェクト
+
 function displayNearbyHospitals(latitude, longitude) {
     const hospitalList = document.getElementById('hospital-list');
     hospitalList.innerHTML = ''; // リストをクリア
@@ -69,18 +77,33 @@ function displayNearbyHospitals(latitude, longitude) {
     } else {
         nearbyHospitals.forEach(({ hospital, distance }) => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${hospital.name} (${distance.toFixed(2)} km)`;
-
-            listItem.onclick = () => {
-                goalSelect.value = hospital.name; // 目的地を選択
-                calculateRoute(); // ルート計算を呼び出す
+    
+            // 病院名をリンクにする
+            const link = document.createElement('a');
+            link.href = '#'; // リンク先は不要
+            link.textContent = `${hospital.name} (${distance.toFixed(2)} km)`;
+    
+            // リンククリック時に該当する病院のマーカーをクリック状態にする
+            link.onclick = (event) => {
+                event.preventDefault(); // デフォルトのリンク動作（スクロール）を防止
+    
+                // 対応する病院のマーカーを取得
+                const marker = hospitalMarkers[hospital.name];
+    if (marker) {
+        // マーカーの位置を地図の中心にしてズーム
+        map.setView(marker.getLatLng(), 13); // ズームレベルは適宜調整
+        marker.openPopup();  // ポップアップを開く
+                }
             };
+    
+            // リストアイテムにリンクを追加
+            listItem.appendChild(link);
             hospitalList.appendChild(listItem);
         });
+    
+        // リストを表示
+        hospitalList.style.display = 'block'; // リストを表示
     }
-
-    // リストを表示
-    hospitalList.style.display = 'block'; // リストを表示
 }
 
 // 位置情報の距離を計算する関数（ハーサイン距離）
@@ -138,12 +161,22 @@ function addHospitalMarkers() {
             <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
             <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
             ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
-            <button class="route-button" data-lat="${lat}" data-lng="${lng}">Go to this hospital</button>
         `;
 
         marker.bindPopup(popupContent); // ポップアップをバインド
+
+        // 病院名をキーにしてマーカーを保存
+        hospitalMarkers[hospital.name] = marker;
     });
 }
+
+// `currentLocationIcon` を定義
+const currentLocationIcon = L.icon({
+    iconUrl: 'path_to_icon.png', // アイコンのパスを適宜修正
+    iconSize: [32, 32], // サイズ
+    iconAnchor: [16, 32], // アイコンのアンカー位置
+    popupAnchor: [0, -32] // ポップアップのアンカー位置
+});
 
 // ルート計算ボタンのクリックイベント
 const routeButton = document.getElementById('route-button'); // ここで routeButton を取得
@@ -197,6 +230,6 @@ function addRoutingControl() {
         waypoints: [],
         routeWhileDragging: true,
         geocoder: L.Control.Geocoder.nominatim()
-    }).addTo(map);
-}
+    }).addTo(map);  // ルーティングコントロールを地図に追加
 
+} // 関数の終了括弧を追加

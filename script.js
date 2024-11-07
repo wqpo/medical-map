@@ -475,16 +475,8 @@ function displayNearbyHospitals(latitude, longitude) {
         });
     }
 
-    // すべての病院を見るボタンを追加
-    const seeAllButton = document.createElement('button');
-    seeAllButton.textContent = 'See all hospitals near you';
-    seeAllButton.onclick = () => {
-        displayAllNearbyHospitals(latitude, longitude); // すべての病院を表示する関数を呼び出す
-    };
-    hospitalList.appendChild(seeAllButton);
-
     // リストを表示
-    hospitalList.style.display = 'block'; // リストを表示
+    hospitalList.style.display = 'block'; // 位置情報取得後にリストを表示
 }
 
 

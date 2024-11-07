@@ -33,6 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 病院の位置がマップ上に表示
     addHospitalMarkers();
     addHospitalOptions(); 
+    // 'Search from your current location' ボタンが押された時に病院リストを表示
+    displayNearbyHospitals(); // この行が誤って初期表示される原因	const searchButton = document.getElementById('nearby-hospitals');
+    if (searchButton) {
+    searchButton.addEventListener('click', () => {
+    getCurrentLocation(); // 現在地を取得
+                displayNearbyHospitals(); // ボタン押下時に病院リストを表示
+    });
+    }
 });
 
 // フィルター
@@ -251,7 +259,7 @@ function addHospitalMarkers() {
             <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
             <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
             ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
-            <button class="route-button" data-lat="${lat}" data-lng="${lng}">この病院へ行く</button>
+            <button class="route-button" data-lat="${lat}" data-lng="${lng}">Go to this hospital</button>
         `;
 
         marker.bindPopup(popupContent); // ポップアップをバインド

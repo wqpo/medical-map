@@ -1,6 +1,7 @@
 let map; // マップをグローバル変数として定義
 let routingControl; // ルーティングコントロールをグローバル変数として定義
 let currentMarker; // 現在地マーカーのグローバル変数
+let currentRoute = null;
 
 import { hospitals } from './hospitals.js';
 import { additionalLocations } from './sub.js'; // 追加
@@ -178,7 +179,7 @@ function addHospitalMarkers() {
             <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
             <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
             ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
-            <button id="go-to-hospital" class="popup-button">ここへ行く</button>
+            <button id="go-to-hospital" class="popup-button">Go here!</button>
         `;
 
         marker.bindPopup(popupContent); // ポップアップをバインド
@@ -317,5 +318,9 @@ document.getElementById('medicinePickupSelect').addEventListener('change', filte
 clearResults(); // 初期状態では何も表示しない
 
 
-// ❤️ルート
-// ❤️
+
+// リセットボタン
+// JavaScript部分
+document.getElementById('reset-button').addEventListener('click', function() {
+    location.reload();  // ページをリロード
+});

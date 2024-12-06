@@ -254,6 +254,53 @@
             .title-box-container {
                 grid-template-columns: 1fr;
             }
+
+            /* 追加分⭐️ */
+            /* 病院名のデザインを設定 */
+#results .hospital h3 {
+    font-size: 12px;            /* フォントサイズを12pxに設定 */
+    font-weight: 100;           /* 細字（ウェイト100） */
+    background-color: #f0f0f0; /* 背景色を薄いグレーに設定 */
+    padding: 5px;               /* 内側の余白 */
+    margin: 5px 0;              /* 上下にマージンを追加 */
+    border-radius: 5px;         /* 角を丸める */
+    list-style-type: none;      /* 箇条書きリストアイテムのスタイルをリセット */
+}
+/* 病院名をホバーした時に青字に変更 */
+.hospital:hover {
+    color: blue;
+    cursor: pointer;
+}
+
+
+/* 箇条書きのスタイル（ul）も設定 */
+#hospital-list {
+    list-style-type: none;   /* デフォルトの箇条書きの丸を消す */
+    padding-left: 0;         /* 左のパディングを削除 */
+}
+
+#hospital-list li {
+    margin-bottom: 10px;     /* リストアイテム間のマージンを調整 */
+}
+
+             /* 病院名リストのデザイン */
+    .hospital {
+        background-color: #f0f0f0; /* グレーの背景 */
+        margin: 5px 0; /* 上下に間隔 */
+        padding: 10px; /* パディングを追加 */
+        border-radius: 5px; /* 角丸 */
+    }
+
+    .hospital h3 {
+        font-size: 12px; /* フォントサイズを12pxに */
+        font-weight: lighter; /* 細字 */
+        margin: 0; /* マージンを0にしてすっきり表示 */
+    }
+
+    /* 結果表示部分のスタイル */
+    #results {
+        margin-top: 20px;
+    }
         }
         
     
@@ -262,6 +309,10 @@
     color: white !important; /* テキストを白に設定 */
     border-radius: 5px !important; /* 角を丸くする */
     padding: 10px !important; /* パディングを追加 */
+
+    /* 追加のcss */
+   
+
 }
 
 
@@ -338,42 +389,42 @@
 <h3 style="font-weight: bold; font-size: 20px; margin-left: 20px; margin-bottom: 10px;">📍Filter Hospitals by Type</h3>
 
 <!-- Options for department -->
+<!-- Options for department -->
 <div id="filter">
     <label for="department-select" style="margin-left: 20px;">⚫️Department:</label>
     <select id="department-select">
         <option value="all">all</option>
-        <option value="🦷 Dentistry">🦷 Dentistry</option>
-        <option value="🦴 Orthopedics">🦴 Orthopedics</option>
-        <option value="🧠 Cranial Nerves">🧠 Cranial Nerves</option>
-        <option value="🧑‍⚕️ Internal Medicine">🧑‍⚕️ Internal Medicine</option>
-        <option value="✂︎ Surgery">✂︎ Surgery</option>
-        <option value="🩲 Proctology">🩲 Proctology</option>
-        <option value="👦 Pediatrics">👦 Pediatrics</option>
-        <option value="🖐️ Dermatology">🖐️ Dermatology</option>
-        <option value="🥐 Gastroenterology">🥐 Gastroenterology</option>
-        <option value="🫃 Gastrointestinal Medicine">🫃 Gastrointestinal Medicine</option>
-        <option value="🩵 Psychiatry">🩵 Psychiatry</option>
-        <option value="💨 Respiratory Medicine">💨 Respiratory Medicine</option>
-        <option value="🪞 Endoscopic Medicine">🪞 Endoscopic Medicine</option>
-        <option value="🌼 Allergy Department">🌼 Allergy Department</option>
-        <option value="❤️ Cardiovascular Medicine">❤️ Cardiovascular Medicine</option>
-        <option value="🦋 Endocrine Surgery (Thyroid Specialist)">🦋 Endocrine Surgery (Thyroid Specialist)</option>
-        <option value="🌿 Chinese Medicine">🌿 Chinese Medicine</option>
-        <option value="🧬 Nephrology">🧬 Nephrology</option>
-        <option value="🫣 Stomach Cancer Screening">🫣 Stomach Cancer Screening</option>
-        <option value="🩸 Colon Cancer Screening">🩸 Colon Cancer Screening</option>
-        <option value="💉 Pain Clinic">💉 Pain Clinic</option>
-        <option value="🩺 Health Check">🩺 Health Check</option>
-        <option value=“🩼Rehabilitatio”>🩼Rehabilitation</option>
-        <option value="➕multiple">➕multiple</option>
-
+        <option value="Dentistry">Dentistry</option>
+        <option value="Orthopedics">Orthopedics</option>
+        <option value="Cranial Nerves">Cranial Nerves</option>
+        <option value="Internal Medicine">Internal Medicine</option>
+        <option value="Surgery">Surgery</option>
+        <option value="Proctology">Proctology</option>
+        <option value="Pediatrics">Pediatrics</option>
+        <option value="Dermatology">Dermatology</option>
+        <option value="Gastroenterology">Gastroenterology</option>
+        <option value="Gastrointestinal Medicine">Gastrointestinal Medicine</option>
+        <option value="Psychiatry">Psychiatry</option>
+        <option value="Respiratory Medicine">Respiratory Medicine</option>
+        <option value="Endoscopic Medicine">Endoscopic Medicine</option>
+        <option value="Allergy Department">Allergy Department</option>
+        <option value="Cardiovascular Medicine">Cardiovascular Medicine</option>
+        <option value="Endocrine Surgery (Thyroid Specialist)">Endocrine Surgery (Thyroid Specialist)</option>
+        <option value="Chinese Medicine">Chinese Medicine</option>
+        <option value="Nephrology">Nephrology</option>
+        <option value="Stomach Cancer Screening">Stomach Cancer Screening</option>
+        <option value="Colon Cancer Screening">Colon Cancer Screening</option>
+        <option value="Pain Clinic">Pain Clinic</option>
+        <option value="Health Check">Health Check</option>
+        <option value="Rehabilitation">Rehabilitation</option>
+        <option value="multiple">multiple</option>
     </select>
 
     <br>
 
     <label for="language-select" style="margin-left: 20px;">⚫️Supported Languages:</label>
     <select id="language-select">
-        <option value="all">all</option> <!-- 初期値を設定 -->
+        <option value="all">all</option>
         <option value="English">English</option>
         <option value="Chinese">Chinese</option>
         <option value="Vietnamese">Vietnamese</option>
@@ -381,17 +432,23 @@
 
     <br>
     <label for="medicinePickupSelect" style="margin-left: 20px;">⚫️Where to pick up medicines:</label>
-<select id="medicinePickupSelect">
-    <option value="all">all</option> <!-- 初期値を設定 -->
-    <option value="In hospital">In hospital</option> <!-- 小文字に修正 -->
-    <option value="Pharmacy">Pharmacy</option>
-</select>
+    <select id="medicinePickupSelect">
+        <option value="all">all</option>
+        <option value="In hospital">In hospital</option>
+        <option value="Pharmacy">Pharmacy</option>
+    </select>
 
-    
-    <button id="filter-button">Filter Hospitals</button>
 </div>
 
-<div id="results"></div>
+<!-- 絞った結果を表示 -->
+<!-- 絞った結果を表示 -->
+<div id="results" style="margin-top: 20px;">
+    <ul id="filter-list" style="list-style-type: none; padding: 0; margin: 0;">
+        <!-- フィルター結果を表示 -->
+    </ul>
+</div>
+
+
 
 
 
@@ -422,15 +479,13 @@
 
 
 <!-- Subheading for searching nearby hospitals -->
+<!-- Subheading for searching nearby hospitals -->
+<!-- Subheading for searching nearby hospitals -->
 <h3 style="font-weight: bold; font-size: 20px; margin-left: 20px; margin-bottom: 10px;">📍Find Nearby Hospitals from Here</h3>
 
-
-
 <button id="nearby-hospitals" style="margin-left: 20px; margin-top: 0px;">Search from your current location</button>
-<div id="hospital-list"></div> <!-- 初期状態を表示に設定 -->
-<ul id="hospital-list" style="display: none;"></ul>
-
-
+<div id="hospital-list" style="display: none;"></div> <!-- 初期状態を表示に設定 -->
+<ul id="hospital-list" style="display: none;"></ul> <!-- 初期状態で非表示 -->
 
 
 
@@ -446,9 +501,10 @@
 </div>
 
 
-   
+   <!-- ポップアップの設定 -->
+    
         
-    </div>
+    
 
     <h2 id="method">
         <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
@@ -513,6 +569,7 @@
 <script type="module" src="hospitals.js"></script>
 <script type="module" src="script.js"></script>
 <script type="module" src="sub.js"></script>
+
 
         
     </body>

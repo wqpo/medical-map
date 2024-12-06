@@ -89,10 +89,10 @@ function displayNearbyHospitals(latitude, longitude) {
     
                 // 対応する病院のマーカーを取得
                 const marker = hospitalMarkers[hospital.name];
-    if (marker) {
-        // マーカーの位置を地図の中心にしてズーム
-        map.setView(marker.getLatLng(), 13); // ズームレベルは適宜調整
-        marker.openPopup();  // ポップアップを開く
+                if (marker) {
+                    // マーカーの位置を地図の中心にしてズーム
+                    map.setView(marker.getLatLng(), 13); // ズームレベルは適宜調整
+                    marker.openPopup();  // ポップアップを開く
                 }
             };
     
@@ -124,12 +124,19 @@ function getCurrentLocation() {
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
 
+            // 現在位置にマーカーを追加
             if (!currentMarker) {
                 currentMarker = L.marker([latitude, longitude], { icon: currentLocationIcon }).addTo(map);
             }
 
+            // 地図を現在地に設定
             map.setView([latitude, longitude], 13);
-            displayNearbyHospitals(latitude, longitude); // 引数を渡して呼び出す
+
+            // 近くの病院を表示
+            displayNearbyHospitals(latitude, longitude); 
+
+            // 病院名リストを表示
+            document.getElementById('hospital-list').style.display = 'block';
         }, (error) => {
             alert("位置情報の取得に失敗しました。詳細: " + error.message);
         });
@@ -138,7 +145,17 @@ function getCurrentLocation() {
     }
 }
 
+// ボタンがクリックされたときに位置情報を取得する処理を追加
+document.getElementById('nearby-hospitals').addEventListener('click', function() {
+    // ボタンが押されたときに、病院リストを表示
+    document.getElementById('hospital-list').style.display = 'block';
+    
+    // 現在地取得（位置情報を取得する関数）
+    getCurrentLocation();
+});
+
 // 病院の位置情報をマップに表示する関数
+
 function addHospitalMarkers() {
     hospitals.forEach(hospital => {
         const [lat, lng] = hospital.coordinates;
@@ -161,75 +178,144 @@ function addHospitalMarkers() {
             <strong>Flow From Reception To Examination:</strong> ${flowFromReception}<br>
             <strong>Medicine Pickup Location:</strong> ${hospital.medicinePickupLocation}<br>
             ${whatWeWantToKnow ? `<strong>What We Want You To Know Before Coming:</strong> ${whatWeWantToKnow}` : ''}<br>
+            <button id="go-to-hospital" class="popup-button">ここへ行く</button>
         `;
 
         marker.bindPopup(popupContent); // ポップアップをバインド
 
-        // 病院名をキーにしてマーカーを保存
-        hospitalMarkers[hospital.name] = marker;
+        // ボタンのクリックイベントを設定
+        marker.on('popupopen', () => {
+            const button = document.getElementById('go-to-hospital');
+            if (button) {
+                button.onclick = () => {
+                    // ルートを計算するために必要な情報を取得
+                    const userLocation = map.getCenter();  // ユーザーの現在地
+                    const hospitalLocation = marker.getLatLng();  // 病院の位置
+
+                    // ユーザーの現在地から病院までのルートを計算
+                    calculateRoute(userLocation, hospitalLocation);
+                };
+            }
+        });
     });
 }
+// ルート計算の関数（例として、現在地から病院までのルートを計算）
+function calculateRoute(start, end) {
+    const routeControl = L.Routing.control({
+        waypoints: [start, end],
+        routeWhileDragging: true
+    }).addTo(map);
+}
 
-// `currentLocationIcon` を定義
+// 現在地マーカーのアイコンを定義
 const currentLocationIcon = L.icon({
-    iconUrl: 'path_to_icon.png', // アイコンのパスを適宜修正
-    iconSize: [32, 32], // サイズ
-    iconAnchor: [16, 32], // アイコンのアンカー位置
-    popupAnchor: [0, -32] // ポップアップのアンカー位置
+    iconUrl: 'images/a.png',  // アイコンのURLをimages/a.pngに変更
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
 });
+// ⭐️フィルター	
+// ⭐️フィルター
+// フィルタリングされた病院を表示する関数
+function filterHospitals() {
+    // フィルタ条件を取得
+    const department = document.getElementById("department-select").value;
+    const language = document.getElementById("language-select").value;
+    const medicinePickup = document.getElementById("medicinePickupSelect").value;
 
-// ルート計算ボタンのクリックイベント
-const routeButton = document.getElementById('route-button'); // ここで routeButton を取得
-const startLocationSelect = document.getElementById('start-location'); // セレクトボックスの取得
-const goalSelect = document.getElementById('goal'); // セレクトボックスの取得
-
-// セレクトボックスの要素を取得
-if (!startLocationSelect || !goalSelect) {
-    console.error('Start Location または Goal セレクトボックスが見つかりませんでした');
-} else {
-    // calculateRoute 関数を宣言
-    function calculateRoute() {
-        const startLocation = startLocationSelect.value; // 修正
-        const goal = goalSelect.value;
-
-        if (!routingControl) { // ルーティングコントロールが初期化されていない場合
-            addRoutingControl(); // 初期化する
-        }
-
-        if (startLocation && goal) {
-            const startHospital = hospitals.find(h => h.name === startLocation);
-            const goalHospital = hospitals.find(h => h.name === goal);
-
-            if (startHospital && goalHospital) {
-                const startCoords = startHospital.coordinates;
-                const goalCoords = goalHospital.coordinates;
-
-                routingControl.setWaypoints([
-                    L.latLng(startCoords[0], startCoords[1]),
-                    L.latLng(goalCoords[0], goalCoords[1])
-                ]);
-            } else {
-                alert("選択した病院の情報が見つかりません。");
-            }
-        } else {
-            alert("出発地と目的地を選択してください。");
-        }
+    // すべてが「all」の場合、病院リストは非表示に
+    if (department === "all" && language === "all" && medicinePickup === "all") {
+        clearResults(); // 結果をクリア
+        return; // 何も表示しない
     }
 
-    // ルート計算ボタンのイベントリスナー
-    if (routeButton) {
-        routeButton.addEventListener('click', () => {
-            calculateRoute();
-        });
+    // hospitalsデータのフィルタリング
+    const filteredHospitals = hospitals.filter(hospital => {
+        // 部署でフィルタリング
+        const isDepartmentMatch = department === "all" || hospital.departments.some(dept => dept.toLowerCase() === department.toLowerCase());
+        // 言語でフィルタリング
+        const isLanguageMatch = language === "all" || hospital.languages.some(lang => lang.toLowerCase() === language.toLowerCase());
+        // 薬の受け取り場所でフィルタリング
+        const isMedicinePickupMatch = medicinePickup === "all" || hospital.medicinePickupLocation.toLowerCase() === medicinePickup.toLowerCase();
+        return isDepartmentMatch && isLanguageMatch && isMedicinePickupMatch;
+    });
+
+    // 結果表示をクリア
+    clearResults();
+    // 結果を病院名だけ表示（箇条書き）
+    displayHospitalNames(filteredHospitals);
+}
+
+// 病院名を箇条書きで表示する関数
+// 病院名をクリックしたときに該当するマーカーをクリックする関数
+function handleHospitalClick(hospital) {
+    // hospital.coordinatesが未定義でないことを確認
+    if (hospital.coordinates && hospital.coordinates.length === 2) {
+        const [lat, lng] = hospital.coordinates;  // coordinatesから緯度と経度を取得
+        const marker = hospitalMarkers[hospital.name]; // マーカー取得
+        if (marker) {
+            // マーカーの位置を地図の中心にしてズーム
+            map.setView([lat, lng], 13); // ズームレベルは適宜調整
+            marker.openPopup();  // ポップアップを開く
+
+            // 地図のスクロールを適切に反映させる
+            map.invalidateSize();  // 地図サイズを再計算
+
+            // 地図が表示される要素へスクロール
+            const mapContainer = document.getElementById("map");  // 地図を表示する要素のIDを指定
+            if (mapContainer) {
+                mapContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+    } else {
+        console.error(`Hospital ${hospital.name} does not have valid coordinates.`);
     }
 }
 
-// ルーティングコントロールを追加する関数
-function addRoutingControl() {
-    routingControl = L.Routing.control({
-        waypoints: [],
-        routeWhileDragging: true,
-        geocoder: L.Control.Geocoder.nominatim()
-    }).addTo(map);  // ルーティングコントロールを地図に追加
 
-} // 関数の終了括弧を追加
+
+
+// 病院名を箇条書きで表示する関数
+function displayHospitalNames(filteredHospitals) {
+    const resultsDiv = document.getElementById("filter-list"); // idを"filter-list"に変更
+    // 既存の結果をリスト形式で表示するため、ulを作成
+    const ul = document.createElement("ul"); // <ul>タグを作成
+    if (filteredHospitals.length === 0) {
+        const noResultsMessage = document.createElement("div");
+        noResultsMessage.textContent = "No hospitals found with the selected filters.";
+        resultsDiv.appendChild(noResultsMessage);
+    } else {
+        filteredHospitals.forEach(hospital => {
+            const li = document.createElement("li"); // <li>タグを作成
+            const link = document.createElement("a"); // クリック可能なリンクを作成
+            link.href = "#"; // リンク先は不要なので "#" に設定
+            link.textContent = hospital.name; // 病院名をリンクとして設定
+            link.style.cursor = "pointer"; // カーソルをクリック可能なスタイルに変更
+            link.addEventListener("click", (e) => {
+                e.preventDefault(); // デフォルトのリンク動作を無効化
+                handleHospitalClick(hospital); // 病院名クリック時に対応するマーカーをクリック
+            });
+            li.appendChild(link); // リンクをリストアイテムに追加
+            ul.appendChild(li); // <ul>に <li> を追加
+        });
+        resultsDiv.appendChild(ul); // 最終的に <ul> を表示
+    }
+}
+
+// 結果表示をクリアする関数
+function clearResults() {
+    const resultsDiv = document.getElementById("filter-list"); // idを"filter-list"に変更
+    resultsDiv.innerHTML = ''; // 既存の結果をクリア
+}
+
+// イベントリスナーを設定
+document.getElementById('department-select').addEventListener('change', filterHospitals);
+document.getElementById('language-select').addEventListener('change', filterHospitals);
+document.getElementById('medicinePickupSelect').addEventListener('change', filterHospitals);
+
+// 初期表示（すべての病院を表示しない）
+clearResults(); // 初期状態では何も表示しない
+
+
+// ❤️ルート
+// ❤️

@@ -1,8 +1,7 @@
 const hospitals = [
-    
     {
         name: "Takada Orthopedic Clinic",
-        departments: ["🦴 Orthopedics"],
+        departments: ["Orthopedics"],
         languages: ["English (2 staff: Doctor/Pharmacist)"],
         patientsInformation: ["Chinese: 10%", "Vietnamese: 10%"],
         interviewSheet: ["English available", "Options such as Yes/No", "Free description field available"],
@@ -12,7 +11,7 @@ const hospitals = [
     },
     {
         name: "Sone Dental Clinic",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese"],
         patientsInformation: [
             "・Chinese: 90%",
@@ -30,8 +29,8 @@ const hospitals = [
         coordinates: [36.06879024747742, 140.16926446441795]
     },
     {
-        name: "Tsukuba University of Technology, Faculty of Health Sciences, Center for Integrated Medical Care (筑波技術大学保健科学部附属東西医学統合医療センター)",
-        departments: ["🧑‍⚕️ Internal Medicine", "✂︎ Surgery", "🦴 Orthopedics", "🩼 Rehabilitation", "🖐️ Dermatology", "🩵 Psychiatry"],
+        name: "Tsukuba University of Technology, Faculty of Health Sciences, Center for Integrated Medical Care ",
+        departments: ["Internal Medicine", "Surgery", "Orthopedics", "Rehabilitation", "Dermatology", "Psychiatry"],
         languages: ["English (4 staff)"],
         patientsInformation: ["English: 80%, Chinese: 20%"],
         interviewSheet: ["English available", "Options such as Yes/No"],
@@ -45,8 +44,8 @@ const hospitals = [
         coordinates: [36.09659694972685, 140.100008104484]
     },
     {
-        name: "Arita Dermatology Clinic (有田皮膚科医院)",
-        departments: ["🖐️ Dermatology"],
+        name: "Arita Dermatology Clinic",
+        departments: ["Dermatology"],
         languages: ["English (1 fluent doctor)"],
         patientsInformation: [
             "Chinese: 2% (We explained using a translator and writing Chinese characters)",
@@ -65,7 +64,7 @@ const hospitals = [
     },
     {
         name: "Meijin Dental Clinic",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese", "Formosan"],
         patientsInformation: [
             "・English: 45%",
@@ -94,7 +93,7 @@ const hospitals = [
     },
     {
         name: "White Essence Dental Office Gori",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese", "Korean", "Vietnamese"],
         patientsInformation: [
             "・English: 10%",
@@ -112,7 +111,7 @@ const hospitals = [
     },
     {
         name: "Miyagawa Internal Medicine/Gastrointestinal Clinic",
-        departments: ["🧑‍⚕️ Internal Medicine", "🥐 Gastroenterology"],
+        departments: ["Internal Medicine", "Gastroenterology"],
         languages: ["English", "Chinese"],
         patientsInformation: [
             "・English: 20%",
@@ -132,7 +131,7 @@ const hospitals = [
     },
     {
         name: "Ota Clinic",
-        departments: ["🧑‍⚕️ Internal Medicine", "👦 Pediatrics", "✂︎ Surgery", "🩲 Proctology"],
+        departments: ["Internal Medicine", "Pediatrics", "Surgery", "Proctology"],
         languages: ["English", "Chinese"],
         patientsInformation: [
             "・English: 10%",
@@ -152,7 +151,7 @@ const hospitals = [
     },
     {
         name: "Minami Odori Clinic",
-        departments: ["🧑‍⚕️ Internal Medicine", "✂︎ Surgery", "👦 Pediatrics", "🩲 Proctology"],
+        departments: ["Internal Medicine", "Surgery", "Pediatrics", "Proctology"],
         languages: ["English", "Japanese", "German", "French", "Spanish"],
         patientsInformation: [
             "・Chinese: 10%"
@@ -172,13 +171,14 @@ const hospitals = [
     },
     {
         name: "Inoue Dental Clinic",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese", "Korean"],
         patientsInformation: [
             "・Chinese: 10%",
             "・Korean: 20%",
             "・Others: 5%"
         ],
+       
         interviewSheet: [
             "English available",
             "Options such as Yes/No",
@@ -193,7 +193,7 @@ const hospitals = [
     },
     {
         name: "Okada Dental Clinic",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese", "Russian", "Belarusian", "British", "Brazilian", "Peruvian", "Vietnamese", "Thai", "Korean", "Canadian"],
         patientsInformation: [
             "Various nationalities including Chinese, Russian, Belarusian, British, Brazilian, Peruvian, Vietnamese, Thai, Korean, and Canadian."
@@ -211,7 +211,7 @@ const hospitals = [
     },
     {
         name: "Tsukuba Gastroenterology/Endoscopy Clinic",
-        departments: ["🧑‍⚕️ Internal Medicine", "🥐 Gastroenterology"],
+        departments: ["Internal Medicine", "Gastroenterology"],
         languages: ["English", "Chinese", "Vietnamese"],
         patientsInformation: [
             "Chinese: 50%",
@@ -231,7 +231,7 @@ const hospitals = [
     },
     {
         name: "Sakuragaoka Dental Center Dental Clinic",
-        departments: ["🦷 Dentistry"],
+        departments: ["Dentistry"],
         languages: ["English", "Chinese", "Korean", "Vietnamese"],
         patientsInformation: [
             "Chinese: 10~20%",
@@ -257,18 +257,18 @@ const hospitals = [
     {
         name: "Tsukuba Citya Internal Medicine Clinic",
         departments: [
-            "🧑‍⚕️ Internal Medicine",
-            "🥐 Gastroenterology",
-            "🫃 Gastrointestinal Medicine",
-            "🪞 Endoscopic Medicine",
-            "💨 Respiratory Medicine",
-            "🌼 Allergy Department",
-            "❤️ Cardiovascular Medicine",
-            "🦋 Endocrine Surgery (Thyroid Specialist)",
-            "🌿 Chinese Medicine",
-            "🧬 Nephrology",
-            "🫣 Stomach Cancer Screening",
-            "🩸 Colon Cancer Screening"
+            "Internal Medicine",
+            "Gastroenterology",
+            "Gastrointestinal Medicine",
+            "Endoscopic Medicine",
+            "Respiratory Medicine",
+            "Allergy Department",
+            "Cardiovascular Medicine",
+            "Endocrine Surgery (Thyroid Specialist)",
+            "Chinese Medicine",
+            "Nephrology",
+            "Stomach Cancer Screening",
+            "Colon Cancer Screening"
         ],
         languages: ["English", "Vietnamese"],
         patientsInformation: [
@@ -290,12 +290,12 @@ const hospitals = [
     {
         name: "Arita Clinic",
         departments: [
-            "🧑‍⚕️ Internal Medicine",
-            "🩲 Proctology",
+            "Internal Medicine",
+            "Proctology",
             "Surgical Treatment",
-            "🫃 Gastrointestinal Medicine",
-            "💉 Pain Clinic",
-            "🩺 Health Check"
+            "Gastrointestinal Medicine",
+            "Pain Clinic",
+            "Health Check"
         ],
         languages: ["English", "Chinese"],
         patientsInformation: [
@@ -318,7 +318,7 @@ const hospitals = [
     },
     {
         name: "Takada Orthopedic Clinic",
-        departments: ["🦴 Orthopedics"],
+        departments: ["Orthopedics"],
         languages: ["English"],
         patientsInformation: [
             "Chinese: 10%",
@@ -339,7 +339,7 @@ const hospitals = [
     },
     {
         name: "Tsukuba White Dental Clinic",
-        departments: ["🦷 Dentistry", "🦴 Orthodontics"],
+        departments: ["Dentistry", "Orthodontics"],
         languages: ["English", "Chinese"],
         patientsInformation: [
             "English: 50%",
@@ -363,7 +363,7 @@ const hospitals = [
     },
     {
         name: "Community Clinic Tsukuba",
-        departments: ["🧑‍⚕️ Internal Medicine"],
+        departments: ["Internal Medicine"],
         languages: ["English", "Chinese"],
         patientsInformation: [
             "Chinese: 20%",
@@ -383,7 +383,7 @@ const hospitals = [
     },
     {
         name: "Shibahara Clinic",
-        departments: ["🧑‍⚕️ Internal Medicine"],
+        departments: ["Internal Medicine"],
         languages: ["English"],
         patientsInformation: [
             "English: 80%"

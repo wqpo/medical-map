@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>📍Medical Map for Foreigners in Tsukuba</title>
+    
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .map-container {
+                position: relative;
+                height: 600px;
+                margin: 20px;
+                overflow: hidden;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+                position: relative;
+                /* 元のコードにあったコメントアウトされた指定を残します */
+                /* height: 1000px; */ /* 高さを指定 */
+                /* width: 100%; */ /* 幅を100%に設定 */
+            }
+            .arrow-buttons {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .arrow-button {
+                width: 35px;
+                height: 35px;
+                background-color: white;
+                border: 1px solid #ccc;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                margin: 3px;
+                font-size: 18px;
+                line-height: 1;
+            }
+            .arrow-button:hover {
+                background-color: rgba(255, 255, 255, 1); /* ホバー時に色を変える */
+            }
+    
+            .menu {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin: 10px;
+                padding: 10px;
+                background-color: #f0f0f0;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                z-index: 10;
+            }
+            .menu-item {
+                flex: 1;
+                text-align: center;
+                margin: 5px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+            .menu-item a {
+                text-decoration: none;
+                color: black;
+                font-weight: bold;
+                transition: color 0.3s;
+            }
+            .menu-item:hover {
+                background-color: #d0d0d0;
+            }
+            .menu-item:hover a {
+                color: blue;
+            }
+    
+    
+            h1 {
+                text-align: center;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                background-image: url('images/john-matychuk-Af8ZjGMsHKQ-unsplash.jpg');
+                background-size: cover;
+                background-position: center;
+                height: 150px;
+                padding: 10px;
+                border-radius: 10px;
+                color: black;
+                z-index: 1;
+            }
+            .yellow-background {
+                background-color: rgba(204, 255, 153, 0.8);
+                padding: 10px;
+                border-radius: 5px;
+                display: inline-flex;
+                align-items: center;
+            }
+            h2 {
+                margin-left: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .title-box-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                margin: 20px;
+            }
+            .title-box {
+                height: 100px;
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+                transition: background-color 0.3s;
+            }
+            .title-box:hover {
+                background-color: #d0d0d0;
+            }
+            .box-icon {
+                margin-right: 10px;
+            }
+            .filter-container {
+                margin: 20px;
+            }
+            #nearby-hospitals {
+                margin-top: 10px;
+            }
+    /* ルートを計算 */ /* このコメントはルールセット外なので問題ないはず */
+            select {
+                width: 150px; /* 適切な幅に設定 */
+                white-space: nowrap; /* テキストを1行にする */
+                overflow: hidden; /* 溢れた部分を隠す */
+                text-overflow: ellipsis; /* 溢れたテキストを「…」で表示 */
+            }
+    
+            .option-text {
+                display: inline-block;
+                max-width: 100px; /* 表示幅を制限 */
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+    
+            .leaflet-control-container .leaflet-routing-container {
+                background-color:#f0f0f0;
+                padding: 10px; /* パディングを追加して見やすくする */
+                border-radius: 5px; /* 角を丸める */
+            }
+    
+            .search-container {
+                display: flex;
+                align-items: center;
+                margin-top: 10px;
+            }
+    
+            .search-container label {
+                margin-right: 10px;
+            }
+            .footer {
+                margin-left: 20px;
+            }
+            .back-link {
+                 margin: 20px;
+            }
+    
+    
+            .back-button {
+                text-decoration: none;
+                color: black;
+                font-size: 16px;
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 5px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+    
+            .back-button:hover {
+                background-color: #d0d0d0;
+                color: black;
+                font-weight: bold;
+            }
+    
+            .contact-link {
+                margin: 20px;
+                text-align: left;
+            }
+            .contact-link a { /* 元のコードではクラス名ではなくaタグにスタイルが当たっていました */
+                text-decoration: none;
+                color: black;
+                font-size: 16px;
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 5px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+            .contact-link a:hover {
+                background-color: #d0d0d0;
+                color: black;
+                font-weight: bold;
+            }
+            #hospital-list {
+                display: block; /* 追加 */
+                margin: 20px;
+                padding: 10px;
+                background-color: #f0f0f0;
+                border-radius: 5px;
+            }
+            .hospital-item {
+                padding: 10px;
+                margin-bottom: 10px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+    
+            @media (max-width: 600px) {
+                .menu {
+                    flex-direction: column;
+                }
+                .title-box-container {
+                    grid-template-columns: 1fr;
+                }
+    
+                /* 追加分⭐️ */
+                /* 病院名のデザインを設定 */
+                #results .hospital h3 { /* このルールは元のHTMLに #results .hospital がないので影響しない可能性 */
+                    font-size: 12px;            /* フォントサイズを12pxに設定 */
+                    font-weight: 100;           /* 細字（ウェイト100） */
+                    background-color: #f0f0f0; /* 背景色を薄いグレーに設定 */
+                    padding: 5px;               /* 内側の余白 */
+                    margin: 5px 0;              /* 上下にマージンを追加 */
+                    border-radius: 5px;         /* 角を丸める */
+                    list-style-type: none;      /* 箇条書きリストアイテムのスタイルをリセット */
+                }
+                /* 病院名をホバーした時に青字に変更 */
+                 .hospital:hover { /* このルールも元のHTMLに .hospital がないので影響しない可能性 */
+                    color: blue;
+                    cursor: pointer;
+                }
+    
+    
+                /* 箇条書きのスタイル（ul）も設定 */
+                #hospital-list { /* このルールはメディアクエリ外の #hospital-list と重複 */
+                    list-style-type: none;   /* デフォルトの箇条書きの丸を消す */
+                    padding-left: 0;         /* 左のパディングを削除 */
+                }
+    
+                #hospital-list li {
+                     margin-bottom: 10px;     /* リストアイテム間のマージンを調整 */
+                 }
+    
+                 /* 病院名リストのデザイン */
+                .hospital { /* このルールも元のHTMLに .hospital がないので影響しない可能性 */
+                    background-color: #f0f0f0; /* グレーの背景 */
+                    margin: 5px 0; /* 上下に間隔 */
+                    padding: 10px; /* パディングを追加 */
+                    border-radius: 5px; /* 角丸 */
+                }
+    
+                .hospital h3 { /* このルールも元のHTMLに .hospital がないので影響しない可能性 */
+                     font-size: 12px; /* フォントサイズを12pxに */
+                     font-weight: lighter; /* 細字 */
+                     margin: 0; /* マージンを0にしてすっきり表示 */
+                 }
+    
+                /* 結果表示部分のスタイル */
+                #results { /* このルールも元のHTMLに #results がないので影響しない可能性 */
+                    margin-top: 20px;
+                }
+            }
+    
+    
+            .leaflet-popup {
+                background-color: rgba(128, 128, 128, 0.9) !important; /* グレーの背景 */
+                color: white !important; /* テキストを白に設定 */
+                border-radius: 5px !important; /* 角を丸くする */
+                padding: 10px !important; /* パディングを追加 */
+    
+                 /* 追加のcss */ /* このコメントはルールセット内だが空ではないので問題ないはず */
+            }
+    
+        </style>
+    </head>
+
+<body>
+   
+    <h1>
+        <div class="yellow-background">
+            <img src="images/top.png" alt="Hospital Map Icon" class="title-image" width="50" height="50">
+            📍Medical Map for Foreigners in Tsukuba 
+        </div>
+    </h1>
+    
+
+    
+
+    <div class="menu">
+        <div class="menu-item"><a href="#features">About This Map</a></div>
+        <div class="menu-item"><a href="#search-for-hospitals">Search for Hospitals</a></div>
+
+        <div class="menu-item"><a href="#method">Survey Subjects<br> &<br> Methods</a></div>
+        <div class="menu-item"><a href="#limitations">Survey Limitations</a></div>
+        <div class="menu-item"><a href="#about">About Us</a></div>
+    </div>
+
+
+    <h2 id="features">
+        <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+        Features of this site
+    </h2>
+    
+
+    <div class="title-box-container">
+        <!-- <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Route to hospitals with foreign language support</strong>
+        </div> -->
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Information on supported languages</strong>
+        </div>
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Staff's level of foreign language support</strong>
+        </div>
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Information on foreign patients visiting the hospital</strong>
+        </div>
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Process from reception to consultation</strong>
+        </div>
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Location for receiving medication</strong>
+        </div>
+        <div class="title-box">
+            <img src="images/check.png" alt="check" style="vertical-align: middle; margin-right: 5px;">
+            <strong>Preparations needed before visiting</strong>
+        </div>
+    </div>
+
+<!-- 病院を探す -->
+<h2 id="search-for-hospitals" style="font-weight: bold; font-size: 24px; margin-bottom: 10px;">
+    <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+    Search for Hospitals
+</h2>
+
+<!-- Subheading for filtering options -->
+<h3 style="font-weight: bold; font-size: 20px; margin-left: 20px; margin-bottom: 10px;">📍Filter Hospitals by Type</h3>
+
+<!-- Options for department -->
+<!-- Options for department -->
+<div id="filter">
+    <label for="department-select" style="margin-left: 20px;">⚫️Department:</label>
+    <select id="department-select">
+        <option value="all">all</option>
+        <option value="Dentistry">Dentistry</option>
+        <option value="Orthopedics">Orthopedics</option>
+        <option value="Cranial Nerves">Cranial Nerves</option>
+        <option value="Internal Medicine">Internal Medicine</option>
+        <option value="Surgery">Surgery</option>
+        <option value="Proctology">Proctology</option>
+        <option value="Pediatrics">Pediatrics</option>
+        <option value="Dermatology">Dermatology</option>
+        <option value="Gastroenterology">Gastroenterology</option>
+        <option value="Gastrointestinal Medicine">Gastrointestinal Medicine</option>
+        <option value="Psychiatry">Psychiatry</option>
+        <option value="Respiratory Medicine">Respiratory Medicine</option>
+        <option value="Endoscopic Medicine">Endoscopic Medicine</option>
+        <option value="Allergy Department">Allergy Department</option>
+        <option value="Cardiovascular Medicine">Cardiovascular Medicine</option>
+        <option value="Endocrine Surgery (Thyroid Specialist)">Endocrine Surgery (Thyroid Specialist)</option>
+        <option value="Chinese Medicine">Chinese Medicine</option>
+        <option value="Nephrology">Nephrology</option>
+        <option value="Stomach Cancer Screening">Stomach Cancer Screening</option>
+        <option value="Colon Cancer Screening">Colon Cancer Screening</option>
+        <option value="Pain Clinic">Pain Clinic</option>
+        <option value="Health Check">Health Check</option>
+        <option value="Rehabilitation">Rehabilitation</option>
+        <option value="multiple">multiple</option>
+    </select>
+
+    <br>
+
+    <label for="language-select" style="margin-left: 20px;">⚫️Supported Languages:</label>
+    <select id="language-select">
+        <option value="all">all</option>
+        <option value="English">English</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Vietnamese">Vietnamese</option>
+    </select>
+
+    <br>
+    <label for="medicinePickupSelect" style="margin-left: 20px;">⚫️Where to pick up medicines:</label>
+    <select id="medicinePickupSelect">
+        <option value="all">all</option>
+        <option value="In hospital">In hospital</option>
+        <option value="Pharmacy">Pharmacy</option>
+    </select>
+
+    <br>
+    <button id="nearby-hospitals" style="margin-left: 20px; margin-top: 10px;">View Filter Results</button>
+
+</div>
+
+<!-- 絞った結果を表示 -->
+<!-- 絞った結果を表示 -->
+<div id="results" style="margin-top: 20px;">
+    <ul id="filter-list" style="list-style-type: none; padding: 0; margin: 0;">
+        <!-- フィルター結果を表示 -->
+    </ul>
+</div>
+
+
+
+
+
+<!-- Subheading for searching nearby hospitals -->
+<h3 style="font-weight: bold; font-size: 20px; margin-left: 20px; margin-bottom: 10px;">📍Find Nearby Hospitals from Here</h3>
+
+<button id="search-hospitals" style="margin-left: 20px; margin-top: 0px;">Search from your current location</button>
+<div id="hospital-list-container" style="display: none;">
+    <ul id="hospital-list"></ul>
+  </div>
+  
+
+<!--リセットボタン -->
+<button id="reset-button" style="margin-left: 30px;">RESET</button>
+
+
+
+<div class="map-container" style="height: 1000px;"> <!-- 高さを650pxに変更 -->
+    <div id="map" style="width: 100%; height: 100%;"></div> <!-- 高さを100%に変更 -->
+    <div class="arrow-buttons"> <!-- クラス名を統一 -->
+        <button class="arrow-button up">↑</button>
+        <button class="arrow-button down">↓</button>
+        <button class="arrow-button left">←</button>
+        <button class="arrow-button right">→</button>
+    </div>
+</div>
+
+
+   <!-- ポップアップの設定 -->
+    
+        
+    
+   <h2 id="method">
+    <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+    Survey Subjects & Methods
+</h2>
+<p style="margin-left: 20px;">
+    Using the Ibaraki Prefecture Medical Function Information System, we conducted a survey of 36 medical institutions in Tsukuba City that offer "language-free medical care." (Permission to use information from this site has been obtained.)<br>
+    The survey was conducted around October 2023.<br>
+    (Citation: <a href="https://www.pref.ibaraki.jp/soshiki/hokenfukushi/koso/index.html" target="_blank">https://www.pref.ibaraki.jp/soshiki/hokenfukushi/koso/index.html</a>)<br>
+    (Survey Contents：<a href="https://docs.google.com/forms/d/1GDuiCWaFqcSmz4HnfbI4ndq8yn-GFevT-bs1ieEYy7M/edit" target="_blank">https://docs.google.com/forms/d/1GDuiCWaFqcSmz4HnfbI4ndq8yn-GFevT-bs1ieEYy7M/edit</a>)
+</p>
+
+
+<h2 id="limitations">
+    <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+    Survey Limitations
+</h2>
+<p style="margin-left: 20px;">
+    The accuracy of the information cannot be guaranteed due to limited survey methods.<br>
+    For example, as time passes, staff who can speak foreign languages ​​may be transferred, or may not be available when you visit for some reason.
+</p>
+
+<h2 id="about">
+    <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+    About Us
+</h2>
+<p style="margin-left: 20px; text-align: left;">
+    活動概要：<a href="https://www.t-act.tsukuba.ac.jp/project/view/?seq=779" target="_blank">https://www.t-act.tsukuba.ac.jp/project/view/?seq=779</a>
+</p>
+
+  
+    <h2 id="back">
+        <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+        Feedback and Requests
+    </h2>
+    <p style="margin-left: 20px;">
+        Thank you for visiting this site. This site is still under development. Please let us know your thoughts, requests, and any additional information or features you would like to see.
+    </p>
+    
+    <div class="back-link">
+        <a href="https://forms.gle/WTQeezxJ76csekT29" class="back-button">
+            Submit feedback
+        </a>
+    </div>
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    
+    <h2 id="contact">
+        <img src="images/top.png" alt="Top Image" style="height: 30px; margin-right: 10px; vertical-align: middle;">
+        Contact us(問い合わせはこちら)
+    </h2>
+
+    <p style="margin-left: 20px;">回答いただいた36件の医療機関の皆様、ご協力誠にありがとうございました。頂いた回答をもとにこのサイトに記載させて頂いております。しかし万が一回答に誤り等が生じている場合が考えられます。お手数おかけしますが、記載情報に誤りや変更等がある場合は下のボタンからお問い合わせ頂けますと幸いです。</p>
+
+
+        <div class="contact-link">
+            <a href="https://docs.google.com/forms/d/1tatGuO4o1PMf6-XU0JDLLH1_krxid18gfCTtupbv3LU/edit" class="contact-button">
+                Contact us(問い合わせはこちら)
+            </a>
+        </div>
+  <!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet Routing Machine JS -->
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<!-- Leaflet Geocoder Nominatim -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<!-- 病院情報 -->
+<!-- <script type="module" src="hospitals.js"></script> -->
+<script type="module" src="script.js"></script>
+<script type="module" src="sub.js"></script>
+
+
+        
+    </body>
+    
+    </html>
+    

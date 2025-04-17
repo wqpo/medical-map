@@ -1,1 +1,1 @@
-web: gunicorn backend.app:app
+web: /var/app/venv/current/bin/gunicorn backend.app:app

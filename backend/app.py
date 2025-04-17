@@ -1,4 +1,4 @@
-# backend/app.py (座標をfloatに変換する修正適用版)
+# backend/app.py (変数名を app から application に修正)
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import boto3
@@ -10,7 +10,7 @@ import traceback
 
 # AWSとの連携
 TABLE_NAME = 'Hospitals'
-AWS_REGION = None 
+AWS_REGION = None
 
 # DynamoDBのDecimal型をJSONで扱えるように変換するヘルパークラス
 class DecimalEncoder(json.JSONEncoder):
@@ -22,10 +22,10 @@ class DecimalEncoder(json.JSONEncoder):
             return list(obj)
         return super(DecimalEncoder, self).default(obj)
 
-# Flaskアプリケーションの初期化
+# Flaskアプリケーションの初期化 ★★★ ここを application に変更 ★★★
 application = Flask(__name__)
-# app.json_encoder = DecimalEncoder # DecimalEncoderのみに頼らないので不要かも
-CORS(app)
+# application.json_encoder = DecimalEncoder # DecimalEncoderのみに頼らないので不要かも
+CORS(application) # ★★★ ここも application に変更 ★★★
 
 # DynamoDBリソースの初期化
 try:
@@ -74,14 +74,14 @@ def process_item_for_json(item):
 
 # --- APIエンドポイントの定義 ---
 
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET']) # ★★★ ここも application に変更 ★★★
 def health_check():
     if table:
         return jsonify({"status": "OK", "message": f"Connected to DynamoDB table '{TABLE_NAME}'"}), 200
     else:
          return jsonify({"status": "ERROR", "message": "Failed to connect to DynamoDB"}), 500
 
-@app.route('/api/hospitals', methods=['GET'])
+@application.route('/api/hospitals', methods=['GET']) # ★★★ ここも application に変更 ★★★
 def get_hospitals():
     print("Received request for /api/hospitals")
     if not table:
@@ -109,7 +109,7 @@ def get_hospitals():
         print(traceback.format_exc())
         return jsonify({"error": "Failed to retrieve hospital data from DynamoDB"}), 500
 
-@app.route('/api/hospitals/<string:hospital_id_param>', methods=['GET'])
+@application.route('/api/hospitals/<string:hospital_id_param>', methods=['GET']) # ★★★ ここも application に変更 ★★★
 def get_hospital_by_id(hospital_id_param):
     print(f"Received request for /api/hospitals/{hospital_id_param}")
     if not table:
@@ -137,4 +137,8 @@ def get_hospital_by_id(hospital_id_param):
 
 # --- Flaskサーバーの起動 ---
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # Gunicornから起動される場合は、この部分は通常実行されない
+    # ローカルでの直接実行 (python backend/app.py) のためだけに残しておく
+    # ポート番号は環境変数 PORT があればそれを使い、なければ5001を使う (EB互換性のため)
+    port = int(os.environ.get("PORT", 5001))
+    application.run(debug=True, host='0.0.0.0', port=port) # ★★★ ここも application に変更 ★★★

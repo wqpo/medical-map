@@ -23,7 +23,7 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(obj)
 
 # Flaskアプリケーションの初期化
-app = Flask(__name__)
+application = Flask(__name__)
 # app.json_encoder = DecimalEncoder # DecimalEncoderのみに頼らないので不要かも
 CORS(app)
 

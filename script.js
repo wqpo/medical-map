@@ -52,7 +52,7 @@ function initializeMap() {
 // APIから病院データを非同期で読み込み、マーカーなどを追加する関数
 async function loadAndDisplayHospitals() {
     console.log("Fetching hospital data from API...");
-    const apiUrl = 'http://127.0.0.1:5001/api/hospitals'; // ローカルAPIサーバーのURL
+    const apiUrl = '/api/hospitals';
 
     try {
         const response = await fetch(apiUrl);
